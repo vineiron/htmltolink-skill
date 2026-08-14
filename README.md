@@ -9,7 +9,7 @@ and hand you back a public link plus a private manage link. No account, no signu
 ## Install
 
 ```sh
-npx skills add vineiron/htmltolink
+npx skills add vineiron/htmltolink-skill
 ```
 
 Works with Claude Code, Cursor, Codex, Copilot, and other agents supported by the
