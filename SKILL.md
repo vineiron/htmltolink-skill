@@ -43,7 +43,10 @@ Before the `POST`, confirm the file has:
 - [ ] A real `<title>` (what the page is, not "Document" or "Untitled").
 - [ ] Open Graph tags (`og:title`, `og:description`) so the link unfurls
       properly in chat apps — a bare URL with no preview reads as spam.
-- [ ] A favicon (one line, see authoring guide) instead of the generic globe.
+- [ ] A favicon. htmltolink injects its own brand mark into any page that
+      ships without one, so a page with no `<link rel="icon">` wears the
+      platform's tab icon rather than its own. One line of emoji SVG claims
+      it — see [choosing the favicon](references/authoring.md#the-favicon-pick-an-emoji-that-is-about-the-page).
 - [ ] No references to local files (`./style.css`, `img/photo.png`) — the page
       is published alone, so anything not inlined is a 404.
 - [ ] No `http://` (non-https) sub-resources — the page is served over https and
@@ -53,7 +56,9 @@ Before the `POST`, confirm the file has:
 
 For mode 1 (user's existing file), don't fix these silently — publish, then
 mention anything that will visibly break (local file refs, mixed content) and
-offer to fix it.
+offer to fix it. A missing favicon isn't a break — the page just wears
+htmltolink's mark — so offer it as a one-line improvement, don't add it
+unasked.
 
 ## Publish a page
 

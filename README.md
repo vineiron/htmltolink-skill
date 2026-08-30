@@ -34,7 +34,8 @@ You can also ask it to build the page in the same breath:
 
 When the agent generates the HTML itself, the skill's
 [authoring guide](./references/authoring.md) kicks in — link-preview (Open
-Graph) tags, mobile-first layout, dark mode, a favicon, and honest guidance on
+Graph) tags, mobile-first layout, dark mode, a favicon emoji picked to match the
+page, and honest guidance on
 what a single static file can and can't do. Files you hand it are published
 as-is, never silently restyled.
 

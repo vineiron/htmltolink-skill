@@ -28,10 +28,66 @@ Notes:
 
 - `<title>` names the page ("Q3 Sales Recap"), it doesn't describe it
   ("A page showing sales data"). Never "Document" or "Untitled".
-- The emoji-SVG favicon is one line and replaces the generic gray globe in the
-  browser tab. Pick an emoji that matches the page.
 - `og:image` is optional (there's nowhere to host a separate image), but
   `og:title` + `og:description` alone already produce a proper preview card.
+
+## The favicon: pick an emoji that is about the page
+
+**Always ship one.** htmltolink injects its own brand mark into any page served
+without a `<link rel="icon">`, so a page that skips it wears the platform's tab
+icon instead of its own. Your one line wins — the injection only fires when the
+page has no icon of its own.
+
+This matters more than it sounds. The tab icon is how someone finds the page
+again in a row of fifteen tabs, and it is the only picture most link-shares
+ever get.
+
+The line, with the emoji swapped:
+
+```html
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+```
+
+**How to pick.** Name the page's subject in one noun, then pick the emoji a
+person would draw for that noun. Concrete beats clever:
+
+| The page is | Good | Not |
+| --- | --- | --- |
+| Kyoto trip itinerary | 🗺️ 🇯🇵 ⛩️ | ✨ (says nothing) |
+| Q3 sales recap | 📈 | 📄 (every page is a document) |
+| Wedding details & RSVP | 💍 💐 | ❤️ (generic) |
+| Recipe for ramen | 🍜 | 🍽️ (the category, not the dish) |
+| Product changelog | 🚀 📦 | 🔔 |
+| Personal résumé | 👤 🧑‍💻 | 📎 |
+| Party invite | 🎉 | 🥳 (face emoji read as noise at 16px) |
+| D&D campaign notes | 🐉 | 🎲 |
+
+Rules that hold up:
+
+- **Specific over categorical.** The dish, not "food". The chart, not "document".
+- **One emoji, one glyph.** Skip ZWJ sequences (👨‍👩‍👧‍👦, 🏳️‍🌈) and keycaps —
+  they render inconsistently at 16px and some platforms drop them entirely.
+- **Read it at 16px.** Anything with fine internal detail (🧬, 🗓️ with numbers,
+  most face emoji) turns to mush. Bold silhouettes survive.
+- **Match the title, not the vibe.** If the `<title>` is "Kyoto in 4 Days", 🗺️
+  is right and ✨ is decoration.
+- **Skin-tone and flag modifiers** are fine but rarely add anything at that size.
+
+If the page has a real brand mark, use it instead — inline the SVG in the same
+`data:` URI, or point `href` at an https URL that will stay up. Emoji is the
+default because it costs one line and no request, not because it's the ceiling.
+
+**Syntax gotchas** — the value is a URL, so:
+
+- Quotes inside the SVG must be percent-encoded as `%22`. Unencoded `"` ends the
+  HTML attribute and the icon silently vanishes.
+- Keep `y=".9em"` — it sits the glyph on the baseline. Without it the emoji is
+  clipped at the top of the box.
+- `#` inside an inline SVG (a hex color, say) must be `%23`.
+- Use `rel="icon"`. `rel="apple-touch-icon"` alone does not count as a favicon,
+  and htmltolink will still inject its mark alongside it.
+- `data:` icons work under the platform's strictest serve mode, so this line is
+  always safe.
 
 ## Layout: mobile first, one column
 
