@@ -1,6 +1,6 @@
 # htmltolink skill
 
-Publish an HTML file and get a public link — from inside your AI coding agent.
+Publish an HTML file and get a public link, from inside your AI coding agent.
 
 When you (or your agent) have a self-contained HTML file and want to share it,
 this skill tells the agent to publish it to [htmltolink.com](https://htmltolink.com)
@@ -25,19 +25,19 @@ Just ask your agent to share the page, in your own words:
 
 The agent publishes it and shows you:
 
-- **Public link** — share with anyone (`something.htmltolink.site`).
-- **Manage link** — keep private; update or delete the page from it.
+- **Public link**: share with anyone (`something.htmltolink.site`).
+- **Manage link**: keep private; update or delete the page from it.
 
 You can also ask it to build the page in the same breath:
 
 > "make me a page for my trip itinerary and give me a link"
 
 When the agent generates the HTML itself, the skill's
-[authoring guide](./references/authoring.md) kicks in — link-preview (Open
+[authoring guide](./references/authoring.md) kicks in: link-preview (Open
 Graph) tags, mobile-first layout, dark mode, a favicon emoji picked to match the
-page, and honest guidance on
-what a single static file can and can't do. Files you hand it are published
-as-is, never silently restyled.
+page, a pass to strip the tells that make a page read as AI-generated, and
+honest guidance on what a single static file can and can't do. Files you hand it
+are published as-is, never silently restyled.
 
 ## How it works
 
@@ -48,7 +48,7 @@ curl -sS -X POST https://htmltolink.com/v1/pages \
   -H 'Content-Type: text/html' --data-binary @index.html
 ```
 
-Everything is auditable in [`SKILL.md`](./SKILL.md) — no hidden network calls, no
+Everything is auditable in [`SKILL.md`](./SKILL.md): no hidden network calls, no
 credentials. One self-contained HTML file per page; anonymous uploads up to 10 MB
 (publish from the website for 25 MB).
 
