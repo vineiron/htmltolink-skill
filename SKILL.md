@@ -145,6 +145,9 @@ curl -sS -X DELETE https://htmltolink.com/v1/pages/PAGE_ID \
   `.html` file), not JSON or a multipart form without a `file` field.
 - **`{"error":{"code":"content_blocked"}}`** → the page looks like a phishing /
   credential-harvest page and was rejected. Do not retry; tell the user.
+- **`{"error":{"code":"blocked"}}`** → this network was blocked after an abuse
+  takedown (HTTP 403). Do not retry; tell the user, and pass on the `hint`
+  (it names the ops email for appeals).
 - **`{"error":{"code":"rate_limited"}}`** → too many publishes from this network.
   Respect the `Retry-After` response header before trying again.
 - **`{"error":{"code":"invalid_manage_token"}}`** on update/delete → the token or
