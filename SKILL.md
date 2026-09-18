@@ -90,21 +90,75 @@ The response is JSON:
   "manage_url": "https://htmltolink.com/m/aBcD...",
   "manage_token": "aBcD...",
   "expires_at": "2026-11-11T00:00:00.000Z",
-  "claim_url": "https://htmltolink.com/m/aBcD...#keep"
+  "claim_url": "https://htmltolink.com/c/aBcD...",
+  "claimed": false
 }
+```
+
+`claim_url` is a one-click "save this page to my account" link (Google sign-in).
+It is `null` when the publish already carried an API key (see below) — the page
+is already owned, there is nothing to claim.
+
+## API key (optional — for users with an account)
+
+Anonymous publish always works. But if the environment has an
+`HTMLTOLINK_API_KEY` variable set (the user generates one at
+https://htmltolink.com/dashboard/keys), publish with it so the page lands on
+their dashboard immediately — no claim step:
+
+```sh
+curl -sS -X POST https://htmltolink.com/v1/pages \
+  -H 'Content-Type: text/html' \
+  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  --data-binary @PATH_TO_FILE.html
+```
+
+Check `if [ -n "$HTMLTOLINK_API_KEY" ]` before deciding which form to use. Do not
+invent, ask for, or store the key yourself — if it's not in the environment,
+publish anonymously and give the user the claim link instead.
+
+With a key you may also pass suggested tags, choosing them from what the page is
+(`landing`, `event-invite`, `client-acme` — lowercase slug form, max 10):
+
+```sh
+  -H 'X-Page-Tags: landing,client-acme'
+```
+
+Claim an older page onto the account (you need the page id and its manage token
+from the original publish response in the conversation):
+
+```sh
+curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/claim \
+  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"manage_token":"MANAGE_TOKEN"}'
+```
+
+Set or replace a page's tags later:
+
+```sh
+curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/tags \
+  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"tags":["landing","client-acme"]}'
 ```
 
 ## Report back to the user
 
-Show the user two things clearly, and label them:
+Show the user these clearly, and label them:
 
 1. **The public link** (`url`): "Share this with anyone."
 2. **The manage link** (`manage_url`): "Keep this private. It's the only way to
    update or delete your page. Anyone who has it can edit or delete the page."
+3. **The save-to-account link** (`claim_url`, when present): "Click once to save
+   this page to your account (Google sign-in) — then it's on your dashboard and
+   can't get lost." This is the only durable trail: once this conversation
+   scrolls away, the manage link is gone with it, so encourage the click. Skip
+   this line when `claim_url` is `null` (already owned via API key).
 
 Tell them the page stays up as long as people open it (pages unopened for ~90
-days are cleaned up), and that they can update it in place or delete it from the
-manage link.
+days are cleaned up; account-owned pages are exempt), and that they can update
+it in place or delete it from the manage link.
 
 ## Update or delete a page
 
@@ -143,8 +197,13 @@ curl -sS -X DELETE https://htmltolink.com/v1/pages/PAGE_ID \
 - **`{"error":{"code":"unsupported_content_type"}}`** → the body wasn't recognized
   as HTML. Make sure you sent the raw HTML with `Content-Type: text/html` (or a
   `.html` file), not JSON or a multipart form without a `file` field.
-- **`{"error":{"code":"content_blocked"}}`** → the page looks like a phishing /
-  credential-harvest page and was rejected. Do not retry; tell the user.
+- **`{"error":{"code":"content_blocked"}}`** (HTTP 451) → the page was refused.
+  Three causes, and the `message` says which: it looks like a phishing or
+  credential-harvest page; its content was removed for abuse before and cannot be
+  republished; or it links to a site flagged for phishing or malware, in which
+  case the `hint` names the exact URL. Do not retry. Tell the user, and pass on
+  the `hint` when there is one: a flagged link is usually something they can
+  simply remove.
 - **`{"error":{"code":"blocked"}}`** → this network was blocked after an abuse
   takedown (HTTP 403). Do not retry; tell the user, and pass on the `hint`
   (it names the ops email for appeals).

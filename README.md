@@ -52,6 +52,14 @@ Everything is auditable in [`SKILL.md`](./SKILL.md): no hidden network calls, no
 credentials. One self-contained HTML file per page; anonymous uploads up to 10 MB
 (publish from the website for 25 MB).
 
+## With an account
+
+Keys are optional, and publishing never needs one. If you have a key from
+[your keys page](https://htmltolink.com/dashboard/keys), the skill picks it up
+from `HTMLTOLINK_API_KEY` and your pages land on your dashboard already yours,
+with no claim step. Name the key after wherever you put it, a laptop or a CI
+job, so you can revoke the right one later.
+
 ## Links
 
 - Website: https://htmltolink.com
