@@ -182,6 +182,19 @@ curl -sS -X DELETE https://htmltolink.com/v1/pages/PAGE_ID \
   -H 'Authorization: Bearer MANAGE_TOKEN'
 ```
 
+Let search engines list a page (or stop them). Every page is served `noindex`
+by default, owned or not; this is the owner's per-page opt-in, so only do it
+when the user says they want the page findable in search. Needs the API key:
+
+```sh
+curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/indexable \
+  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Content-Type: application/json' -d '{"on":true}'
+```
+
+Turning it off again (`{"on":false}`) makes search engines drop the page on
+their next crawl. Releasing a page turns it off as well.
+
 Release a page from the user's account (it stays online, becomes anonymous
 again, and leaves their dashboard). Only when the user asks for exactly that;
 needs the API key:
