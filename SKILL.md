@@ -163,7 +163,9 @@ it in place or delete it from the manage link.
 ## Update or delete a page
 
 Both use two values from the publish response: `id` (in the URL) and
-`manage_token` (as a Bearer token).
+`manage_token` (as a Bearer token). If the page was published with the user's
+API key, the key works in place of the manage token for every call below, so
+nothing needs to be kept from the publish response but the `id`.
 
 Update in place (same public URL, new content):
 
@@ -180,20 +182,31 @@ curl -sS -X DELETE https://htmltolink.com/v1/pages/PAGE_ID \
   -H 'Authorization: Bearer MANAGE_TOKEN'
 ```
 
+Release a page from the user's account (it stays online, becomes anonymous
+again, and leaves their dashboard). Only when the user asks for exactly that;
+needs the API key:
+
+```sh
+curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/release \
+  -H "Authorization: Bearer $HTMLTOLINK_API_KEY"
+```
+
 ## Rules
 
 - Publish exactly **one self-contained HTML file** per page. Inline or embed CSS,
   JS, and images. Multi-file sites and external local files are not supported.
-- Anonymous uploads are capped at **10 MB**. If the file is larger, tell the user
-  to publish it from the website (https://htmltolink.com) for a higher limit, or
-  to shrink embedded images.
+- Anonymous uploads are capped at **10 MB**; with an API key the cap is **25 MB**,
+  the same as the website. If the file is larger than the cap you have, tell the
+  user to publish it from the website (https://htmltolink.com), set up a key, or
+  shrink embedded images.
 - Only publish content the user has the right to publish. The service removes
   phishing, malware, and other abuse.
 
 ## Troubleshoot predictably
 
-- **`{"error":{"code":"file_too_large"}}`** → the file exceeds 10 MB. Suggest the
-  website (25 MB with a quick human check) or shrinking embedded assets.
+- **`{"error":{"code":"file_too_large"}}`** → the file exceeds the cap (10 MB
+  anonymous, 25 MB with a key). Suggest a key, the website, or shrinking embedded
+  assets.
 - **`{"error":{"code":"unsupported_content_type"}}`** → the body wasn't recognized
   as HTML. Make sure you sent the raw HTML with `Content-Type: text/html` (or a
   `.html` file), not JSON or a multipart form without a `file` field.

@@ -49,8 +49,8 @@ curl -sS -X POST https://htmltolink.com/v1/pages \
 ```
 
 Everything is auditable in [`SKILL.md`](./SKILL.md): no hidden network calls, no
-credentials. One self-contained HTML file per page; anonymous uploads up to 10 MB
-(publish from the website for 25 MB).
+credentials. One self-contained HTML file per page; anonymous uploads up to 10 MB,
+25 MB with an API key or from the website.
 
 ## With an account
 
