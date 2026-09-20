@@ -55,10 +55,16 @@ credentials. One self-contained HTML file per page; anonymous uploads up to 10 M
 ## With an account
 
 Keys are optional, and publishing never needs one. If you have a key from
-[your keys page](https://htmltolink.com/dashboard/keys), the skill picks it up
-from `HTMLTOLINK_API_KEY` and your pages land on your dashboard already yours,
-with no claim step. Name the key after wherever you put it, a laptop or a CI
-job, so you can revoke the right one later.
+[your keys page](https://htmltolink.com/dashboard/keys), paste it into the chat
+when you ask:
+
+> "publish this page with my htmltolink key htk_..."
+
+The agent uses it for that conversation and your pages land on your dashboard
+already yours, with no claim step. The skill never writes the key anywhere: not
+to a file, not to your shell, not to the agent's memory. Name the key after
+wherever you use it, a laptop or a CI job, so you can revoke the right one
+later.
 
 ## Links
 

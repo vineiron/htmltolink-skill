@@ -101,21 +101,24 @@ is already owned, there is nothing to claim.
 
 ## API key (optional — for users with an account)
 
-Anonymous publish always works. But if the environment has an
-`HTMLTOLINK_API_KEY` variable set (the user generates one at
-https://htmltolink.com/dashboard/keys), publish with it so the page lands on
-their dashboard immediately — no claim step:
+Anonymous publish always works. With a key (the user creates one at
+https://htmltolink.com/dashboard/keys, it starts with `htk_`), the page lands on
+their dashboard immediately, with no claim step. The key reaches you one way:
+the user gives it to you in the conversation, by pasting it or saying "with my
+htmltolink key". Use it as the Bearer token for every htmltolink call in this
+conversation, where `YOUR_KEY` appears below. Do not write it to any file,
+environment variable, memory or config, and do not repeat it back in your
+replies; call it "your key". It is gone when the conversation is.
 
 ```sh
 curl -sS -X POST https://htmltolink.com/v1/pages \
   -H 'Content-Type: text/html' \
-  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Authorization: Bearer YOUR_KEY' \
   --data-binary @PATH_TO_FILE.html
 ```
 
-Check `if [ -n "$HTMLTOLINK_API_KEY" ]` before deciding which form to use. Do not
-invent, ask for, or store the key yourself — if it's not in the environment,
-publish anonymously and give the user the claim link instead.
+Do not invent a key, and do not ask for one unprompted. With no key, publish
+anonymously and give the user the claim link instead.
 
 With a key you may also pass suggested tags, choosing them from what the page is
 (`landing`, `event-invite`, `client-acme` — lowercase slug form, max 10):
@@ -129,7 +132,7 @@ from the original publish response in the conversation):
 
 ```sh
 curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/claim \
-  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Authorization: Bearer YOUR_KEY' \
   -H 'Content-Type: application/json' \
   -d '{"manage_token":"MANAGE_TOKEN"}'
 ```
@@ -138,7 +141,7 @@ Set or replace a page's tags later:
 
 ```sh
 curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/tags \
-  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Authorization: Bearer YOUR_KEY' \
   -H 'Content-Type: application/json' \
   -d '{"tags":["landing","client-acme"]}'
 ```
@@ -188,7 +191,7 @@ when the user says they want the page findable in search. Needs the API key:
 
 ```sh
 curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/indexable \
-  -H "Authorization: Bearer $HTMLTOLINK_API_KEY" \
+  -H 'Authorization: Bearer YOUR_KEY' \
   -H 'Content-Type: application/json' -d '{"on":true}'
 ```
 
@@ -201,7 +204,7 @@ needs the API key:
 
 ```sh
 curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/release \
-  -H "Authorization: Bearer $HTMLTOLINK_API_KEY"
+  -H 'Authorization: Bearer YOUR_KEY'
 ```
 
 ## Rules
