@@ -120,11 +120,19 @@ curl -sS -X POST https://htmltolink.com/v1/pages \
 Do not invent a key, and do not ask for one unprompted. With no key, publish
 anonymously and give the user the claim link instead.
 
-With a key you may also pass suggested tags, choosing them from what the page is
-(`landing`, `event-invite`, `client-acme` — lowercase slug form, max 10):
+Tags belong to the user. They are how the dashboard is organized (clients,
+projects, `draft`), and only the user knows that vocabulary. Pass tags only
+when the user named them in this conversation ("tag it client-acme", or a tag
+they already used for a related page in this same conversation). Never derive
+tags from what the page is or looks like: `landing`, `mock`, `invoice` and the
+like are noise on their dashboard, and every invented tag becomes a filter
+they have to clean up. With no instruction, publish untagged; the dashboard
+has a "no tags" filter, so the user tags pages there in their own words.
+
+When the user did name tags, send them as lowercase slugs, max 10:
 
 ```sh
-  -H 'X-Page-Tags: landing,client-acme'
+  -H 'X-Page-Tags: client-acme,q4-launch'
 ```
 
 Claim an older page onto the account (you need the page id and its manage token
@@ -143,8 +151,11 @@ Set or replace a page's tags later:
 curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/tags \
   -H 'Authorization: Bearer YOUR_KEY' \
   -H 'Content-Type: application/json' \
-  -d '{"tags":["landing","client-acme"]}'
+  -d '{"tags":["client-acme","q4-launch"]}'
 ```
+
+Same rule as at publish: only tags the user asked for. This replaces the whole
+list, so include the ones they want to keep.
 
 ## Report back to the user
 
@@ -217,6 +228,8 @@ curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/release \
   shrink embedded images.
 - Only publish content the user has the right to publish. The service removes
   phishing, malware, and other abuse.
+- Never tag a page the user did not ask to tag. Tags are theirs, not a place
+  for your description of the page.
 
 ## Troubleshoot predictably
 
