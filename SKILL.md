@@ -53,10 +53,22 @@ Before the `POST`, confirm the file has:
       browsers block mixed content.
 - [ ] No fetch/XHR calls to servers that won't exist for visitors (e.g.
       `localhost`).
-- [ ] For pages you wrote: none of the AI-generated tells (em dashes sprinkled
-      through the prose, "it's not just X, it's Y", emoji headings, the
-      purple-to-blue hero gradient, leftover placeholder text). See
+- [ ] For pages you wrote: none of the AI-generated tells ("it's not just X,
+      it's Y", emoji headings, the purple-to-blue hero gradient, leftover
+      placeholder text). See
       [authoring.md](references/authoring.md#dont-let-it-read-as-ai-generated).
+- [ ] For pages you wrote: no em dash, en dash, middle dot, ellipsis character
+      or arrow. This must print nothing outside verbatim quotes and code
+      samples the page displays:
+      ```sh
+      grep -nE '—|–|·|…|→|&(mdash|ndash|middot|hellip|rarr);' PATH_TO_FILE.html
+      ```
+- [ ] For pages you wrote: no pure white or black as the page background or
+      body text, no box with both a fill and a border, links open in a new tab
+      only when the reader will want to come back, and read-only, link and
+      button each look different. See
+      [color](references/authoring.md#color-and-dark-mode) and
+      [links and controls](references/authoring.md#links-and-controls).
 
 For mode 1 (user's existing file), don't fix these silently. Publish, then
 mention anything that will visibly break (local file refs, mixed content) and
@@ -96,10 +108,10 @@ The response is JSON:
 ```
 
 `claim_url` is a one-click "save this page to my account" link (Google sign-in).
-It is `null` when the publish already carried an API key (see below) — the page
-is already owned, there is nothing to claim.
+It is `null` when the publish already carried an API key (see below): the page
+is already owned, so there is nothing to claim.
 
-## API key (optional — for users with an account)
+## API key (optional, for users with an account)
 
 Anonymous publish always works. With a key (the user creates one at
 https://htmltolink.com/dashboard/keys, it starts with `htk_`), the page lands on
@@ -165,7 +177,7 @@ Show the user these clearly, and label them:
 2. **The manage link** (`manage_url`): "Keep this private. It's the only way to
    update or delete your page. Anyone who has it can edit or delete the page."
 3. **The save-to-account link** (`claim_url`, when present): "Click once to save
-   this page to your account (Google sign-in) — then it's on your dashboard and
+   this page to your account (Google sign-in). Then it's on your dashboard and
    can't get lost." This is the only durable trail: once this conversation
    scrolls away, the manage link is gone with it, so encourage the click. Skip
    this line when `claim_url` is `null` (already owned via API key).
@@ -233,23 +245,23 @@ curl -sS -X POST https://htmltolink.com/v1/pages/PAGE_ID/release \
 
 ## Troubleshoot predictably
 
-- **`{"error":{"code":"file_too_large"}}`** → the file exceeds the cap (10 MB
+- **`{"error":{"code":"file_too_large"}}`**: the file exceeds the cap (10 MB
   anonymous, 25 MB with a key). Suggest a key, the website, or shrinking embedded
   assets.
-- **`{"error":{"code":"unsupported_content_type"}}`** → the body wasn't recognized
+- **`{"error":{"code":"unsupported_content_type"}}`**: the body wasn't recognized
   as HTML. Make sure you sent the raw HTML with `Content-Type: text/html` (or a
   `.html` file), not JSON or a multipart form without a `file` field.
-- **`{"error":{"code":"content_blocked"}}`** (HTTP 451) → the page was refused.
+- **`{"error":{"code":"content_blocked"}}`** (HTTP 451): the page was refused.
   Three causes, and the `message` says which: it looks like a phishing or
   credential-harvest page; its content was removed for abuse before and cannot be
   republished; or it links to a site flagged for phishing or malware, in which
   case the `hint` names the exact URL. Do not retry. Tell the user, and pass on
   the `hint` when there is one: a flagged link is usually something they can
   simply remove.
-- **`{"error":{"code":"blocked"}}`** → this network was blocked after an abuse
+- **`{"error":{"code":"blocked"}}`**: this network was blocked after an abuse
   takedown (HTTP 403). Do not retry; tell the user, and pass on the `hint`
   (it names the ops email for appeals).
-- **`{"error":{"code":"rate_limited"}}`** → too many publishes from this network.
+- **`{"error":{"code":"rate_limited"}}`**: too many publishes from this network.
   Respect the `Retry-After` response header before trying again.
-- **`{"error":{"code":"invalid_manage_token"}}`** on update/delete → the token or
+- **`{"error":{"code":"invalid_manage_token"}}`** on update/delete: the token or
   page id is wrong. Re-check both from the original publish response.
