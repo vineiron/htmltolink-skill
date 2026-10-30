@@ -293,16 +293,6 @@ There is no backend. What works, and what to reach for:
 - No shared or server state: nothing one visitor does is visible to another.
   Don't build a poll or counter that pretends otherwise.
 - No secrets: everything in the file is public, including anything in the JS.
-- No background threads: pages are served with `worker-src 'none'`, so Web
-  Workers can't start. MapLibre GL and Mapbox GL can't draw their vector layers
-  (streets, labels, water), and DuckDB-wasm and Perspective fail. For maps use
-  Leaflet; any main-thread chart library (Chart.js, D3, ECharts, Plotly, Vega)
-  works.
-- No referrer: pages are served with `Referrer-Policy: no-referrer`.
-  OpenStreetMap tiles in Leaflet still load, but a map or API key locked to the
-  page's address (Google Maps, Mapbox URL restrictions) rejects requests without
-  one. Add `<meta name="referrer" content="strict-origin">` to that page only;
-  it tells those services the page's URL.
 
 ## Accessibility floor
 
