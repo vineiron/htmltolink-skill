@@ -102,14 +102,14 @@ The response is JSON:
   "manage_url": "https://htmltolink.com/m/aBcD...",
   "manage_token": "aBcD...",
   "expires_at": "2026-11-11T00:00:00.000Z",
-  "claim_url": "https://htmltolink.com/c/aBcD...",
-  "claimed": false
+  "claimed": false,
+  "size_limit": 10485760
 }
 ```
 
-`claim_url` is a one-click "save this page to my account" link (Google sign-in).
-It is `null` when the publish already carried an API key (see below): the page
-is already owned, so there is nothing to claim.
+`claimed` is `true` when the publish carried an API key (see below): the page is
+already on the user's account. When it is `false`, the user saves the page from
+the manage link: Google sign-in, then "Add to my account".
 
 ## API key (optional, for users with an account)
 
@@ -130,7 +130,7 @@ curl -sS -X POST https://htmltolink.com/v1/pages \
 ```
 
 Do not invent a key, and do not ask for one unprompted. With no key, publish
-anonymously and give the user the claim link instead.
+anonymously and point the user to the manage link to save the page instead.
 
 Tags belong to the user. They are how the dashboard is organized (clients,
 projects, `draft`), and only the user knows that vocabulary. Pass tags only
@@ -176,15 +176,16 @@ Show the user these clearly, and label them:
 1. **The public link** (`url`): "Share this with anyone."
 2. **The manage link** (`manage_url`): "Keep this private. It's the only way to
    update or delete your page. Anyone who has it can edit or delete the page."
-3. **The save-to-account link** (`claim_url`, when present): "Click once to save
-   this page to your account (Google sign-in). Then it's on your dashboard and
-   can't get lost." This is the only durable trail: once this conversation
-   scrolls away, the manage link is gone with it, so encourage the click. Skip
-   this line when `claim_url` is `null` (already owned via API key).
+3. **Saving it** (when `claimed` is `false`): "Open the manage link and sign in
+   with Google to add this page to your account, or save an email there. Either
+   way it stops expiring and can't get lost." This is the only durable trail:
+   once this conversation scrolls away, the manage link is gone with it, so
+   encourage doing it now. Skip this line when `claimed` is `true` (already
+   owned via API key).
 
 Tell them the page stays up as long as people open it (pages unopened for ~90
-days are cleaned up; account-owned pages are exempt), and that they can update
-it in place or delete it from the manage link.
+days are cleaned up; pages on an account or with a saved email are exempt), and
+that they can update it in place or delete it from the manage link.
 
 ## Update or delete a page
 
