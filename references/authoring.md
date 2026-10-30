@@ -266,22 +266,53 @@ The page is published as one file with nothing next to it:
   (compress, resize; prefer SVG for graphics).
 - Every external URL must be `https://`. The page is served over https and
   browsers silently block `http://` sub-resources.
-- Icons: inline SVG or emoji, not an icon-font CDN.
+- Icons: inline SVG (Lucide, see `toolkit.md`) or emoji, not an icon-font CDN.
 
 ## Interactivity: client-side only
 
-There is no backend. What works, and what to reach for:
+There is no backend, but the browser is a full app runtime. What works, and
+what to reach for:
 
+- **Pages whose point is data** (reports, dashboards, comparisons, budgets,
+  results): read [data.md](data.md) first.
+- **Anything from another server** (a library, a font, map tiles, an embed,
+  live data): take it from [toolkit.md](toolkit.md). Every tag there is pinned,
+  hash-checked and tested on htmltolink. Don't pull a framework for what 30
+  lines of vanilla JS can do.
+- **Built-in elements before scripts:** `<details>` for sections a reader can
+  fold, `<dialog>` for a detail view, the `popover` attribute for a small menu,
+  `<input type="range">` with `<output>` for a what-if number, `<meter>` for a
+  value within a range. Keyboard and screen-reader support come free.
 - **State that persists per visitor** (a checklist, a filter, a draft):
   `localStorage`, with every read/write in `try/catch` and the page rendering
   correctly when storage is empty or unavailable.
-- **Libraries**: load from a major CDN (cdnjs, jsdelivr), pinned to an exact
-  version, script tag placed before the inline script that uses it. Don't pull
-  a framework for what 30 lines of vanilla JS can do.
-- **Charts/diagrams**: inline SVG, or a pinned CDN chart library.
-- The page should still show its content if JS fails to load. Render the
-  content in HTML and use JS to enhance it, not to construct it, whenever
-  practical.
+- **Views a link can open:** when the page has tabs, filters or variants, keep
+  the current one in the query string, so "look at option B" opens option B.
+  The `#` stays free for section links.
+  ```js
+  const state = new URLSearchParams(location.search);
+  function setState(key, value) {
+    state.set(key, value);
+    history.replaceState(null, '', '?' + state + location.hash);
+    render();
+  }
+  const option = state.get('option') ?? 'a';
+  ```
+- **Copy buttons** (`navigator.clipboard.writeText`) next to anything readers
+  will paste elsewhere: an address, a command, a code.
+- **Print:** plans and reports get saved as PDF. Give them print styles:
+  ```css
+  @media print {
+    nav, button, .no-print { display: none !important; }
+    section, figure, table, .chart { break-inside: avoid; }
+  }
+  ```
+- **Motion that stops:** a transition answers a click and ends. Nothing loops
+  (pulses, shimmers, spinners), and transitions sit inside
+  `@media (prefers-reduced-motion: no-preference)`.
+- The page still shows its content if a CDN fails: text, headline numbers and
+  tables come from the HTML itself or from inline script reading the page's
+  own data, never from a library. Libraries add charts and interaction on top.
 
 **What the platform cannot do.** Design around these, don't ship them broken:
 
@@ -293,6 +324,8 @@ There is no backend. What works, and what to reach for:
 - No shared or server state: nothing one visitor does is visible to another.
   Don't build a poll or counter that pretends otherwise.
 - No secrets: everything in the file is public, including anything in the JS.
+- No background threads (Web Workers): libraries that need one break. Every
+  pick in `toolkit.md` works without.
 
 ## Accessibility floor
 

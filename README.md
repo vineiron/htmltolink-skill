@@ -39,6 +39,12 @@ page, a pass to strip the tells that make a page read as AI-generated, and
 honest guidance on what a single static file can and can't do. Files you hand it
 are published as-is, never silently restyled.
 
+Pages whose point is data (reports, dashboards, comparisons, budgets, results)
+also get the [data guide](./references/data.md): charts with tooltips and a
+table view, sortable tables, maps, and links that open a filtered view. Anything loaded from another server comes from the
+[toolkit](./references/toolkit.md): libraries pinned to exact versions with
+integrity hashes, each tested under htmltolink's serving headers.
+
 ## How it works
 
 The skill is a single `curl` against htmltolink's public API:

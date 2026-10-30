@@ -32,7 +32,11 @@ share it, put it online, or get a link for it.
    and share it, or asked you to improve theirs). Read
    [references/authoring.md](references/authoring.md) **before writing the
    HTML**. It covers what makes a shared single-file page good: link previews,
-   mobile layout, dark mode, and what this platform can and cannot do.
+   mobile layout, dark mode, and what this platform can and cannot do. If the
+   page's point is data (a report, dashboard, comparison, budget or results),
+   also read [references/data.md](references/data.md). Anything loaded from another
+   server (a library, a font, tiles, an embed) comes from
+   [references/toolkit.md](references/toolkit.md).
 
 ## Pre-publish checklist
 
@@ -50,7 +54,8 @@ Before the `POST`, confirm the file has:
 - [ ] No references to local files (`./style.css`, `img/photo.png`). The page
       is published alone, so anything not inlined is a 404.
 - [ ] No `http://` (non-https) sub-resources. The page is served over https and
-      browsers block mixed content.
+      browsers block mixed content. `xmlns="http://www.w3.org/2000/svg"` inside
+      an SVG is a name, not a request, so it's fine.
 - [ ] No fetch/XHR calls to servers that won't exist for visitors (e.g.
       `localhost`).
 - [ ] For pages you wrote: none of the AI-generated tells ("it's not just X,
@@ -69,10 +74,18 @@ Before the `POST`, confirm the file has:
       button each look different. See
       [color](references/authoring.md#color-and-dark-mode) and
       [links and controls](references/authoring.md#links-and-controls).
+- [ ] For pages you wrote: every external `<script>` and stylesheet is on
+      jsDelivr at an exact version with `integrity` and
+      `crossorigin="anonymous"`, ideally copied from
+      [toolkit.md](references/toolkit.md).
+- [ ] Every embed `<iframe>` (YouTube, Vimeo, Figma) has
+      `referrerpolicy="strict-origin-when-cross-origin"`. htmltolink sends no
+      referrer, and a YouTube embed without it shows "Error 153" instead of the
+      video.
 
 For mode 1 (user's existing file), don't fix these silently. Publish, then
-mention anything that will visibly break (local file refs, mixed content) and
-offer to fix it. A missing favicon isn't a break, since the page just wears
+mention anything that will visibly break (local file refs, mixed content, an
+embed without `referrerpolicy`) and offer to fix it. A missing favicon isn't a break, since the page just wears
 htmltolink's mark, so offer it as a one-line improvement rather than adding it
 unasked.
 
